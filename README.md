@@ -42,6 +42,15 @@ Now, let's dive into the thrilling adventure of setting up and running this powe
       sudo bash domain-data-platform.sh --up
       ```
 
+## Configuration Warning
+⚠️ **IMPORTANT: Default .env Configuration**
+
+Please note that the provided ``.env`` configuration file contains default settings. It is crucial to review and adjust the credentials and configuration according to your specific requirements before running the Low Code Data Platform.
+
+Ensure that you carefully set up the necessary credentials, API keys, and access controls to maintain the security and privacy of your data. Failure to properly configure the environment may result in unauthorized access or data breaches.
+
+Please take the time to thoroughly review the documentation and follow the recommended guidelines for securing your Low Code Data Platform installation.
+
 Stay tuned for mind-blowing use cases and unleash the full potential of this epic Low Code Data Platform.
 
 ---
