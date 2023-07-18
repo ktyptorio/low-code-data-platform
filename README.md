@@ -6,7 +6,7 @@ Welcome to the awesome Low Code Data Platform! 🚀 This cutting-edge solution e
 
 Our state-of-the-art Low Code Data Platform comprises an exceptional blend of powerful technologies. Brace yourself for this mind-blowing tech stack:
 
-
+![Low Code Data Platform drawio](https://github.com/ktyptorio/low-code-data-platform/assets/81064943/9ed314ba-bfb2-4c20-b6b8-7d0f628df70b)
 
 1. **Open Metadata**: An open-source metadata framework that revolutionizes the way you manage data objects, data sources, and workflows. It's the ultimate superhero in metadata management.
 
