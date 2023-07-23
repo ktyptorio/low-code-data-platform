@@ -10,10 +10,6 @@
 #  limitations under the License.
 
 version: "3.9"
-volumes:
-  ingestion-volume-dag-airflow:
-  ingestion-volume-dags:
-  ingestion-volume-tmp:
 services:
   mysql:
     container_name: openmetadata_mysql

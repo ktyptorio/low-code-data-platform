@@ -39,7 +39,7 @@ dockerup()
   dot_env=".env"
   source $dot_env
   create_directories
-  docker compose up
+  docker compose up -d
 }
 
 dockerdown()
