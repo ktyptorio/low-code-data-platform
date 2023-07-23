@@ -19,6 +19,7 @@ create_directories() {
 
     if [[ ! -e $BASE_PATH/es-data ]]; then
         mkdir -p $BASE_PATH/es-data
+        chown $USER:$USER
     fi
 
     if [[ ! -e $BASE_PATH/dag_config ]]; then
