@@ -30,8 +30,7 @@ Now, let's dive into the thrilling adventure of setting up and running this powe
       ```bash
       sudo bash docker-install.sh
       cd openmetada
-      mkdir -p $PWD/docker-volume/db-data
-      sudo docker compose up -d
+      sudo bash open-metadata.sh
       ```
 
 2. **Other VMs** - Data Platform Activation:
