@@ -46,50 +46,16 @@ services:
     volumes:
       - ./docker-volume/es-data:/usr/share/elasticsearch/data
 
-  ingestion:
-    container_name: openmetadata_ingestion
-    image: docker.getcollate.io/openmetadata/ingestion:1.1.0
-    depends_on:
-      elasticsearch:
-        condition: service_started
-      mysql:
-        condition: service_healthy
-      openmetadata-server:
-        condition: service_started
-    environment:
-      AIRFLOW__API__AUTH_BACKENDS: ${AIRFLOW__API__AUTH_BACKENDS}
-      AIRFLOW__CORE__EXECUTOR: ${AIRFLOW__CORE__EXECUTOR}
-      AIRFLOW__OPENMETADATA_AIRFLOW_APIS__DAG_GENERATED_CONFIGS: ${AIRFLOW__OPENMETADATA_AIRFLOW_APIS__DAG_GENERATED_CONFIGS}
-      DB_HOST: ${AIRFLOW_DB_HOST}
-      DB_PORT: ${AIRFLOW_DB_PORT}
-      AIRFLOW_DB: ${AIRFLOW_DB}
-      DB_SCHEME: ${AIRFLOW_DB_SCHEME}
-      DB_USER: ${AIRFLOW_DB_USER}
-      DB_PASSWORD: ${AIRFLOW_DB_PASSWORD}
-    entrypoint: /bin/bash
-    command:
-      - "/opt/airflow/ingestion_dependency.sh"
-    expose:
-      - 8080
-    ports:
-      - "8080:8080"
-    networks:
-      - app_net
-    volumes:
-      - ./docker-volume/dag_config:/opt/airflow/dag_generated_configs
-      - ./docker-volume/dags:/opt/airflow/dags
-      - ./docker-volume/secrets:/tmp
-
   openmetadata-server:
     container_name: openmetadata_server
     restart: always
     image: docker.getcollate.io/openmetadata/server:1.1.0
     environment:
-      OPENMETADATA_CLUSTER_NAME: ${OPENMETADATA_CLUSTER_NAME}
-      SERVER_PORT: ${SERVER_PORT}
-      SERVER_ADMIN_PORT: ${SERVER_ADMIN_PORT}
-      LOG_LEVEL: ${LOG_LEVEL}
-      OPENMETADATA_DEBUG: ${OPENMETADATA_DEBUG}
+      OPENMETADATA_CLUSTER_NAME: ${OPENMETADATA_CLUSTER_NAME:-openmetadata}
+      SERVER_PORT: ${SERVER_PORT:-8585}
+      SERVER_ADMIN_PORT: ${SERVER_ADMIN_PORT:-8586}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      OPENMETADATA_DEBUG: ${OPENMETADATA_DEBUG:-false}
 
       # OpenMetadata Server Authentication Configuration
       AUTHORIZER_CLASS_NAME: ${AUTHORIZER_CLASS_NAME}
@@ -114,14 +80,12 @@ services:
       RSA_PRIVATE_KEY_FILE_PATH: ${RSA_PRIVATE_KEY_FILE_PATH}
       JWT_ISSUER: ${JWT_ISSUER}
       JWT_KEY_ID: ${JWT_KEY_ID}
-      
       # OpenMetadata Server Pipeline Service Client Configuration
       PIPELINE_SERVICE_CLIENT_ENDPOINT: ${PIPELINE_SERVICE_CLIENT_ENDPOINT}
       PIPELINE_SERVICE_CLIENT_HEALTH_CHECK_INTERVAL: ${PIPELINE_SERVICE_CLIENT_HEALTH_CHECK_INTERVAL}
       SERVER_HOST_API_URL: ${SERVER_HOST_API_URL}
       PIPELINE_SERVICE_CLIENT_VERIFY_SSL: ${PIPELINE_SERVICE_CLIENT_VERIFY_SSL}
       PIPELINE_SERVICE_CLIENT_SSL_CERT_PATH: ${PIPELINE_SERVICE_CLIENT_SSL_CERT_PATH}
-      
       # Database configuration for MySQL
       DB_DRIVER_CLASS: ${DB_DRIVER_CLASS}
       DB_SCHEME: ${DB_SCHEME}
@@ -131,7 +95,6 @@ services:
       DB_HOST: ${DB_HOST}
       DB_PORT: ${DB_PORT}
       OM_DATABASE: ${OM_DATABASE}
-      
       # ElasticSearch Configurations
       ELASTICSEARCH_HOST: ${ELASTICSEARCH_HOST}
       ELASTICSEARCH_PORT: ${ELASTICSEARCH_PORT}
@@ -158,7 +121,6 @@ services:
       PIPELINE_SERVICE_IP_INFO_ENABLED: ${PIPELINE_SERVICE_IP_INFO_ENABLED}
       PIPELINE_SERVICE_CLIENT_HOST_IP: ${PIPELINE_SERVICE_CLIENT_HOST_IP}
       PIPELINE_SERVICE_CLIENT_SECRETS_MANAGER_LOADER: ${PIPELINE_SERVICE_CLIENT_SECRETS_MANAGER_LOADER}
-      
       #airflow parameters
       AIRFLOW_USERNAME: ${AIRFLOW_USERNAME}
       AIRFLOW_PASSWORD: ${AIRFLOW_PASSWORD}
@@ -169,7 +131,6 @@ services:
 
       #secretsManagerConfiguration
       SECRET_MANAGER: ${SECRET_MANAGER}
-      
       #parameters:
       OM_SM_REGION: ${OM_SM_REGION}
       OM_SM_ACCESS_KEY_ID: ${OM_SM_ACCESS_KEY_ID}
@@ -194,18 +155,40 @@ services:
       OM_RESOURCE_PACKAGES: ${OM_RESOURCE_PACKAGES}
       OM_EXTENSIONS: ${OM_EXTENSIONS}
 
+
       # Heap OPTS Configurations
       OPENMETADATA_HEAP_OPTS: ${OPENMETADATA_HEAP_OPTS}
-      
       # Application Config
       OM_CUSTOM_LOGO_URL_PATH: ${OM_CUSTOM_LOGO_URL_PATH}
       OM_CUSTOM_MONOGRAM_URL_PATH: ${OM_CUSTOM_MONOGRAM_URL_PATH}
       OM_MAX_FAILED_LOGIN_ATTEMPTS: ${OM_MAX_FAILED_LOGIN_ATTEMPTS}
       OM_LOGIN_ACCESS_BLOCK_TIME: ${OM_LOGIN_ACCESS_BLOCK_TIME}
       OM_JWT_EXPIRY_TIME: ${OM_JWT_EXPIRY_TIME}
-      
       # Mask passwords values in UI
       MASK_PASSWORDS_API: ${MASK_PASSWORDS_API}
+      
+      #OpenMetadata Web Configuration
+      WEB_CONF_URI_PATH: ${WEB_CONF_URI_PATH}
+      #HSTS
+      WEB_CONF_HSTS_ENABLED: ${WEB_CONF_HSTS_ENABLED}
+      WEB_CONF_HSTS_MAX_AGE: ${WEB_CONF_HSTS_MAX_AGE}
+      WEB_CONF_HSTS_INCLUDE_SUBDOMAINS: ${WEB_CONF_HSTS_INCLUDE_SUBDOMAINS}
+      WEB_CONF_HSTS_PRELOAD: ${WEB_CONF_HSTS_PRELOAD}
+      #Frame Options
+      WEB_CONF_FRAME_OPTION_ENABLED: ${WEB_CONF_FRAME_OPTION_ENABLED}
+      WEB_CONF_FRAME_OPTION: ${WEB_CONF_FRAME_OPTION}
+      WEB_CONF_FRAME_ORIGIN: ${WEB_CONF_FRAME_ORIGIN}
+      #Content Type
+      WEB_CONF_CONTENT_TYPE_OPTIONS_ENABLED: ${WEB_CONF_CONTENT_TYPE_OPTIONS_ENABLED}
+      #XSS-Protection  
+      WEB_CONF_XSS_PROTECTION_ENABLED: ${WEB_CONF_XSS_PROTECTION_ENABLED}
+      WEB_CONF_XSS_PROTECTION_ON: ${WEB_CONF_XSS_PROTECTION_ON}
+      WEB_CONF_XSS_PROTECTION_BLOCK: ${WEB_CONF_XSS_PROTECTION_BLOCK}
+      #CSP    
+      WEB_CONF_XSS_CSP_ENABLED: ${WEB_CONF_XSS_CSP_ENABLED}
+      WEB_CONF_XSS_CSP_POLICY: ${WEB_CONF_XSS_CSP_POLICY}
+      WEB_CONF_XSS_CSP_REPORT_ONLY_POLICY: ${WEB_CONF_XSS_CSP_REPORT_ONLY_POLICY}
+      
     expose:
       - 8585
       - 8586
@@ -220,7 +203,41 @@ services:
     networks:
       - app_net
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8586/healthcheck" ]
+      test: [ "CMD", "wget", "-q", "--spider",  "http://localhost:8586/healthcheck" ]
+
+  ingestion:
+    container_name: openmetadata_ingestion
+    image: docker.getcollate.io/openmetadata/ingestion:1.1.0
+    depends_on:
+      elasticsearch:
+        condition: service_started
+      mysql:
+        condition: service_healthy
+      openmetadata-server:
+        condition: service_started
+    environment:
+      AIRFLOW__API__AUTH_BACKENDS: "airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session"
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__OPENMETADATA_AIRFLOW_APIS__DAG_GENERATED_CONFIGS: "/opt/airflow/dag_generated_configs"
+      DB_HOST: ${AIRFLOW_DB_HOST}
+      DB_PORT: ${AIRFLOW_DB_PORT}
+      AIRFLOW_DB: ${AIRFLOW_DB}
+      DB_SCHEME: ${AIRFLOW_DB_SCHEME}
+      DB_USER: ${AIRFLOW_DB_USER}
+      DB_PASSWORD: ${AIRFLOW_DB_PASSWORD}
+    entrypoint: /bin/bash
+    command:
+      - "/opt/airflow/ingestion_dependency.sh"
+    expose:
+      - 8080
+    ports:
+      - "8080:8080"
+    networks:
+      - app_net
+    volumes:
+      - ./docker-volume/dag_config:/opt/airflow/dag_generated_configs
+      - ./docker-volume/dags:/opt/airflow/dags
+      - ./docker-volume/secrets:/tmp
 
 networks:
   app_net:
