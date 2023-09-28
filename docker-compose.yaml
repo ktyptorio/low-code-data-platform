@@ -280,7 +280,7 @@ services:
     hostname: clickhouse
     volumes:
       - ${PWD}/fs/volumes/clickhouse/etc/clickhouse-server/config.d/config.xml:/etc/clickhouse-server/config.d/config.xml
-      - ${PWD}//fs/volumes/clickhouse/etc/clickhouse-server/users.d/users.xml:/etc/clickhouse-server/users.d/users.xml
+      - ${PWD}/fs/volumes/clickhouse/etc/clickhouse-server/users.d/users.xml:/etc/clickhouse-server/users.d/users.xml
     ports:
       - "8123:8123"
       - "9000:9000"
@@ -294,9 +294,9 @@ services:
     image: quay.io/minio/minio
     container_name: minio
     hostname: minio
-    command: server --address 0.0.0.0:10000 --console-address 0.0.0.0:10001 /data
+    command: server --console-address 0.0.0.0:10001 /data
     ports:
-      - "10000:10000"
+      - "9009:9000"
       - "10001:10001"
     environment:
       - MINIO_ROOT_USER=${MINIO_ROOT_USER}
@@ -311,10 +311,12 @@ services:
       - minio
     entrypoint: >
       /bin/sh -c "
-      /usr/bin/mc alias set myminio http://minio:10000 $MINIO_ROOT_USER $MINIO_ROOT_PASSWORD;
+      /usr/bin/mc alias set myminio http://minio:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD};
       /usr/bin/mc admin info myminio;
-      /usr/bin/mc mb myminio/clickhouse;
-      /usr/bin/mc policy set public myminio/clickhouse;
+      /usr/bin/mc mb myminio/datastaging;
+      /usr/bin/mc policy set public myminio/datastaging;
+      /usr/bin/mc mb myminio/dataproduct;
+      /usr/bin/mc policy set public myminio/dataproduct;
       exit 0;
       "
     networks:
